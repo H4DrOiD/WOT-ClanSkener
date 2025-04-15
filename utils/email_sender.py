@@ -1,0 +1,1 @@
+# Tu bude funkcia na posielanie emailov
