@@ -1,0 +1,1 @@
+# Tu budú funkcie pre komunikáciu s Wargaming API
