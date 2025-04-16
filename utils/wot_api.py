@@ -23,8 +23,7 @@ def get_account_info(account_id):
     response = requests.get(url, params=params)
     return response.json()
 
-Do app.py (v route /, POST časť) pridaj zatiaľ test:
-python
+Do app.py (v route /, POST časť) 
 Kopírovať
 Upraviť
 from utils.wot_api import search_players_by_nickname, get_account_info
@@ -33,8 +32,7 @@ from utils.wot_api import search_players_by_nickname, get_account_info
 def index():
     if request.method == 'POST':
         country = request.form.get('country')
-        nickname = "PantherXx"  # neskôr sa nahradí reálnym výberom
-
+        nickname = "PantherXx" 
         results = search_players_by_nickname(nickname)
         players = []
 
