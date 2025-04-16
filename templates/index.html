@@ -1,45 +1,19 @@
 {% extends "base.html" %}
+
 {% block content %}
-<h2>Vyhľadávanie hráčov bez klanu</h2>
+<h1>🎯 WOT-ClanSkener</h1>
+<p>Zadaj parametre pre vyhľadávanie hráčov bez klanu:</p>
+
 <form method="POST">
     <label for="min_battles">Minimálny počet bitiek:</label>
-    <input type="number" id="min_battles" name="min_battles" required>
+    <input type="number" id="min_battles" name="min_battles" value="1000" required><br><br>
 
     <label for="min_wn8">Minimálna WN8:</label>
-    <input type="number" id="min_wn8" name="min_wn8" required>
+    <input type="number" id="min_wn8" name="min_wn8" value="1000" required><br><br>
 
-    <label for="nation">Národnosť:</label>
-    <select id="nation" name="nation">
-        <option value="any">Nezáleží</option>
-        <option value="cs">Česká republika</option>
-        <option value="sk">Slovensko</option>
-        <option value="pl">Poľsko</option>
-        <option value="de">Nemecko</option>
-        <option value="en">Anglicky hovoriaci</option>
-        <option value="ru">Rusko</option>
-    </select>
+    <label for="country">Národnosť hráča (kód krajiny, napr. sk, cz, pl alebo nechaj prázdne):</label>
+    <input type="text" id="country" name="country"><br><br>
 
-    <button type="submit">Skenovať</button>
+    <button type="submit">🔍 Spustiť skenovanie</button>
 </form>
-
-<h3>Výsledky skenovania</h3>
-<p>Krajina: {{ selected_nation or "Nezáleží" }}</p>
-
-{% if error %}
-  <p style="color:red;">❌ {{ error }}</p>
-{% elif players %}
-  <ul>
-  {% for player in players %}
-    <li>
-      <strong>{{ player.nickname }}</strong>
-      – Bitky: {{ player.battles }},
-      – WN8: <span style="color:{{ player.wn8_color }}">{{ player.wn8 }}</span>,
-      – Národnosť: {{ player.nation|upper }},
-      – ID: {{ player.account_id }}
-    </li>
-  {% endfor %}
-  </ul>
-{% else %}
-  <p>Zatiaľ žiadne výsledky.</p>
-{% endif %}
 {% endblock %}
