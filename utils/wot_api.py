@@ -2,7 +2,7 @@ import requests
 import os
 import json
 
-WG_API_KEY = os.getenv("WG_API_KEY")
+WG_API_KEY = os.getenv(29b6e96e5fa1462cbebfb386fb565a0d)
 
 # 🔍 Vyhľadá hráčov podľa prefixu (napr. "a", "b", atď.)
 def search_players_by_nickname(prefix, limit=10):
