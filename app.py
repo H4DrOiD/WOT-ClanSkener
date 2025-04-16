@@ -15,14 +15,25 @@ def index():
         test_nickname = "PantherXx"
         api_result = search_players_by_nickname(test_nickname)
 
-        players = []
+         players = []
 
         if api_result.get("status") == "ok":
             for player in api_result["data"]:
                 nickname = player["nickname"]
                 account_id = player["account_id"]
-                players.append(f"{nickname} (ID: {account_id})")
 
+                clan_data = get_clan_info(account_id)
+                is_clanless = False
+
+                if clan_data.get("status") == "ok":
+                    player_data = clan_data["data"].get(str(account_id))
+                    if player_data is None:
+                        is_clanless = True
+                    elif player_data.get("clan") is None:
+                        is_clanless = True
+
+                if is_clanless:
+                    players.append(f"{nickname} (ID: {account_id})")
         return render_template('dashboard.html', players=players, country=country)
 
     return render_template('index.html')
