@@ -22,23 +22,3 @@ def get_account_info(account_id):
     }
     response = requests.get(url, params=params)
     return response.json()
-
-Kopírovať
-Upraviť
-from utils.wot_api import search_players_by_nickname, get_account_info
-
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        country = request.form.get('country')
-        nickname = "PantherXx" 
-        results = search_players_by_nickname(nickname)
-        players = []
-
-        if results.get("status") == "ok":
-            for player in results["data"]:
-                players.append(player["nickname"])
-
-        return render_template('dashboard.html', players=players, country=country)
-
-    return render_template('index.html')
