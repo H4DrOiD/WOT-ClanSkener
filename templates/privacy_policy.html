@@ -1,8 +1,12 @@
-<!DOCTYPE html>
-<html lang="sk">
-<head><meta charset="UTF-8"><title>Ochrana súkromia</title></head>
-<body>
-    <h1>Zásady ochrany osobných údajov</h1>
-    <p>Táto stránka používa cookies a spracúva údaje pre účely kontaktovania hráčov.</p>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+<h1>🛡️ Ochrana osobných údajov</h1>
+
+<p>Tvoj súkromie je pre nás dôležité. Na stránke <strong>WOT-ClanSkener</strong> zhromažďujeme len minimálne informácie nevyhnutné na prevádzku služby.</p>
+
+<h2>📊 Aké údaje zhromažďujeme?</h2>
+<ul>
+    <li>Herné dáta zo služby World of Tanks cez verejné API.</li>
+    <li>E-mail veliteľa klanu, ak si zvolí notifikácie (neukladáme ich do databázy).</li>
+    <li>Žiadne hes
