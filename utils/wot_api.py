@@ -23,7 +23,6 @@ def get_account_info(account_id):
     response = requests.get(url, params=params)
     return response.json()
 
-app.py (v route /, POST ) 
 Kopírovať
 Upraviť
 from utils.wot_api import search_players_by_nickname, get_account_info
