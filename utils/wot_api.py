@@ -22,7 +22,6 @@ def get_account_info(account_id):
     }
     response = requests.get(url, params=params)
     return response.json()
-3. V app.py (backend):
 
 Do app.py (v route /, POST časť) pridaj zatiaľ test:
 python
