@@ -15,7 +15,7 @@ def index():
         test_nickname = "PantherXx"
         api_result = search_players_by_nickname(test_nickname)
 
-         players = []
+players = []
 
         if api_result.get("status") == "ok":
             for player in api_result["data"]:
