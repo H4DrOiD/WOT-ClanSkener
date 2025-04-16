@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: wot-clanskener
+    env: python
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app"
+    autoDeploy: true
+    envVars:
+      - key: 29b6e96e5fa1462cbebfb386fb565a0d
+        value: 981118
