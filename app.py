@@ -49,3 +49,11 @@ def privacy():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
+
+from utils.wn8 import calculate_wn8, load_expected_values
+from utils.wot_api import get_tank_stats
+
+expected_values = load_expected_values()
+tank_stats = get_tank_stats(account_id)
+wn8 = calculate_wn8(tank_stats["data"][str(account_id)], expected_values)
+
