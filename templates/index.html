@@ -1,30 +1,45 @@
 {% extends "base.html" %}
-{% block title %}Domov{% endblock %}
 {% block content %}
-<h1>Vitajte v nástroji WOT Clan Skener</h1>
-<p>Skontroluj členov klanu podľa zvolených kritérií.</p>
+<h2>Vyhľadávanie hráčov bez klanu</h2>
+<form method="POST">
+    <label for="min_battles">Minimálny počet bitiek:</label>
+    <input type="number" id="min_battles" name="min_battles" required>
 
-<form method="POST" action="/">
-    <label for="wn8">Minimálne WN8:</label><br>
-    <input type="number" id="wn8" name="wn8" required><br><br>
+    <label for="min_wn8">Minimálna WN8:</label>
+    <input type="number" id="min_wn8" name="min_wn8" required>
 
-    <label for="battles">Minimálny počet bitiek:</label><br>
-    <input type="number" id="battles" name="battles" required><br><br>
-
-    <label for="email">Tvoj email (pre notifikácie):</label><br>
-    <input type="email" id="email" name="email" required><br><br>
-
-    <label for="country">Krajina hráča:</label><br>
-    <select name="country" id="country">
-        <option value="">Nezáleží</option>
-        <option value="cz">Česká republika</option>
+    <label for="nation">Národnosť:</label>
+    <select id="nation" name="nation">
+        <option value="any">Nezáleží</option>
+        <option value="cs">Česká republika</option>
         <option value="sk">Slovensko</option>
         <option value="pl">Poľsko</option>
         <option value="de">Nemecko</option>
+        <option value="en">Anglicky hovoriaci</option>
         <option value="ru">Rusko</option>
-        <!-- ďalšie krajiny podľa potreby -->
-    </select><br><br>
+    </select>
 
-    <button type="submit">Spustiť skenovanie</button>
+    <button type="submit">Skenovať</button>
 </form>
+
+<h3>Výsledky skenovania</h3>
+<p>Krajina: {{ selected_nation or "Nezáleží" }}</p>
+
+{% if error %}
+  <p style="color:red;">❌ {{ error }}</p>
+{% elif players %}
+  <ul>
+  {% for player in players %}
+    <li>
+      <strong>{{ player.nickname }}</strong>
+      – Bitky: {{ player.battles }},
+      – WN8: <span style="color:{{ player.wn8_color }}">{{ player.wn8 }}</span>,
+      – Národnosť: {{ player.nation|upper }},
+      – ID: {{ player.account_id }}
+    </li>
+  {% endfor %}
+  </ul>
+{% else %}
+  <p>Zatiaľ žiadne výsledky.</p>
+{% endif %}
 {% endblock %}
