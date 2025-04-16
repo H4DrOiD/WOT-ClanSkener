@@ -13,51 +13,61 @@ app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        country = request.form.get('country')
-        wn8_input = request.form.get('wn8')
-        battles_input = request.form.get('battles')
-        email = request.form.get('email')
+        try:
+            country = request.form.get('country')
+            wn8_input = request.form.get('wn8')
+            battles_input = request.form.get('battles')
+            email = request.form.get('email')
 
-        search_prefixes = ["a", "b", "c", "d", "e"]
-        expected_values = load_expected_values()
-        players = []
+            search_prefixes = ["a", "b", "c", "d", "e"]
+            expected_values = load_expected_values()
+            players = []
 
-        for prefix in search_prefixes:
-            api_result = search_players_by_nickname(prefix)
+            for prefix in search_prefixes:
+                api_result = search_players_by_nickname(prefix)
 
-            if api_result.get("status") == "ok":
-                for player in api_result["data"]:
-                    nickname = player["nickname"]
-                    account_id = player["account_id"]
+                if api_result.get("status") == "ok":
+                    for player in api_result["data"]:
+                        try:
+                            nickname = player["nickname"]
+                            account_id = player["account_id"]
 
-                    # Overenie klanu
-                    clan_data = get_clan_info(account_id)
-                    is_clanless = False
+                            # Overenie klanu
+                            clan_data = get_clan_info(account_id)
+                            is_clanless = False
 
-                    if clan_data.get("status") == "ok":
-                        player_data = clan_data["data"].get(str(account_id))
-                        if player_data is None or player_data.get("clan") is None:
-                            is_clanless = True
+                            if clan_data.get("status") == "ok":
+                                player_data = clan_data["data"].get(str(account_id))
+                                if player_data is None or player_data.get("clan") is None:
+                                    is_clanless = True
 
-                    # Získanie štatistík a výpočet WN8
-                    tank_stats_result = get_tank_stats(account_id)
-                    wn8 = 0
-                    battle_count = 0
+                            # Získanie štatistík a výpočet WN8
+                            tank_stats_result = get_tank_stats(account_id)
+                            wn8 = 0
+                            battle_count = 0
 
-                    if tank_stats_result.get("status") == "ok":
-                        tank_data = tank_stats_result["data"].get(str(account_id), [])
-                        wn8 = calculate_wn8(tank_data, expected_values)
-                        battle_count = sum(t["statistics"]["battles"] for t in tank_data)
+                            if tank_stats_result.get("status") == "ok":
+                                tank_data = tank_stats_result["data"].get(str(account_id), [])
+                                wn8 = calculate_wn8(tank_data, expected_values)
+                                battle_count = sum(
+                                    t["statistics"].get("battles", 0) for t in tank_data
+                                )
 
-                    # Podmienky podľa formulára
-                    min_wn8 = int(wn8) >= int(wn8_input) if wn8_input else True
-                    min_battles = battle_count >= int(battles_input) if battles_input else True
+                            # Porovnanie s formulárovými podmienkami
+                            min_wn8 = int(wn8) >= int(wn8_input) if wn8_input else True
+                            min_battles = battle_count >= int(battles_input) if battles_input else True
 
-                    if is_clanless and min_wn8 and min_battles:
-                        players.append(f"{nickname} | WN8: {wn8} | Bitky: {battle_count}")
+                            if is_clanless and min_wn8 and min_battles:
+                                players.append(f"{nickname} | WN8: {wn8} | Bitky: {battle_count}")
+                        except Exception as inner_error:
+                            print(f"Chyba pri hráčovi: {inner_error}")
+                            continue  # Preskočí problémového hráča
 
-        return render_template('dashboard.html', players=players, country=country)
-
+            return render_template('dashboard.html', players=players, country=country)
+        except Exception as outer_error:
+            print(f"Vonkajšia chyba: {outer_error}")
+            return render_template('dashboard.html', players=["❌ Vyskytla sa chyba pri spracovaní hráčov."])
+    
     return render_template('index.html')
 
 @app.route('/dashboard')
