@@ -1,12 +1,21 @@
-<!DOCTYPE html>
-<html lang="sk">
-<head><meta charset="UTF-8"><title>Výsledky</title></head>
-<body>
-    <h1>Nájdení hráči</h1>
-    <ul>
-        {% for player in players %}
-            <li>{{ player }}</li>
-        {% endfor %}
-    </ul>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Výsledky skenovania</h2>
+
+{% if country %}
+<p><strong>Filtrované podľa krajiny:</strong> {{ country | upper }}</p>
+{% else %}
+<p><strong>Krajina:</strong> Nezáleží</p>
+{% endif %}
+
+{% if players %}
+<ul>
+  {% for player in players %}
+    <li>{{ player }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<p>Zatiaľ žiadne výsledky.</p>
+{% endif %}
+{% endblock %}
