@@ -1,47 +1,61 @@
+mport os
 from flask import Flask, render_template, request
-import os
-import json
-from utils.wot_api import search_players_by_nickname, get_account_info, get_tank_stats, calculate_wn8
+from utils.wot_api import (
+    search_players_by_nickname,
+    get_account_info,
+    get_tank_stats,
+    calculate_wn8,
+)
 
-app = Flask(__name__)
+app = Flask(__WOT__)
+app.secret_key = os.getenv("29b6e96e5fa1462cbebfb386fb565a0d", "981118")
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    results = []
-    debug_info = {"checked": 0, "found": 0, "matched": 0}
+    players = []
+    error_message = None
+    selected_country = None
 
     if request.method == "POST":
-        wn8_min = int(request.form.get("wn8", 0))
-        battles_min = int(request.form.get("battles", 0))
-        country = request.form.get("country")
-        email = request.form.get("email")
+        selected_country = request.form.get("country")
+        nicknames_input = request.form.get("nicknames")
 
-        import string
-        search_prefixes = list(string.ascii_lowercase) + [str(i) for i in range(10)] + list("-_.+=@")
+        if not nicknames_input:
+            error_message = "Zadaj aspoň jeden nick."
+        else:
+            nicknames = [nick.strip() for nick in nicknames_input.splitlines()]
+            try:
+                for nick in nicknames:
+                    account_id = search_players_by_nickname(nick)
+                    if not account_id:
+                        continue
 
-        for prefix in search_prefixes:
-            players = search_players_by_nickname(prefix)
-            debug_info["checked"] += len(players)
+                    account_info = get_account_info(account_id)
+                    tank_stats = get_tank_stats(account_id)
+                    wn8 = calculate_wn8(tank_stats)
 
-            for player in players:
-                if player.get("clan_id"):
-                    continue  # hráč je v klane
+                    players.append({
+                        "nickname": nick,
+                        "account_id": account_id,
+                        "battles": account_info.get("statistics", {}).get("all", {}).get("battles", 0),
+                        "wn8": round(wn8, 2) if wn8 else "N/A"
+                    })
+            except Exception as e:
+                print(f"Chyba: {e}")
+                error_message = "Vyskytla sa chyba pri spracovaní hráčov."
 
-                debug_info["found"] += 1
-                account_id = player["account_id"]
-                info = get_account_info(account_id)
-                stats = get_tank_stats(account_id)
-                wn8 = calculate_wn8(stats)
+    return render_template("index.html", players=players, country=selected_country, error=error_message)
 
-                if info["battles"] >= battles_min and wn8 >= wn8_min:
-                    player["wn8"] = wn8
-                    player["battles"] = info["battles"]
-                    results.append(player)
-                    debug_info["matched"] += 1
 
-        results = sorted(results, key=lambda x: x["wn8"], reverse=True)
+@app.route("/dashboard")
+def dashboard():
+    return render_template("dashboard.html")
 
-    return render_template("index.html", results=results, debug=debug_info)
+
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
