@@ -22,3 +22,12 @@ def get_account_info(account_id):
     }
     response = requests.get(url, params=params)
     return response.json()
+
+def get_clan_info(account_id):
+    url = "https://api.worldoftanks.eu/wot/clans/accountinfo/"
+    params = {
+        "application_id": API_ID,
+        "account_id": account_id
+    }
+    response = requests.get(url, params=params)
+    return response.json()
