@@ -57,3 +57,20 @@ expected_values = load_expected_values()
 tank_stats = get_tank_stats(account_id)
 wn8 = calculate_wn8(tank_stats["data"][str(account_id)], expected_values)
 
+from utils.wn8 import calculate_wn8, load_expected_values
+from utils.wot_api import get_tank_stats
+
+# Načítame očakávané hodnoty raz pri štarte requestu
+expected_values = load_expected_values()
+
+# vo vnútri for player in api_result["data"]:
+    tank_stats_result = get_tank_stats(account_id)
+
+    if tank_stats_result.get("status") == "ok":
+        tank_data = tank_stats_result["data"].get(str(account_id), [])
+        wn8 = calculate_wn8(tank_data, expected_values)
+    else:
+        wn8 = "N/A"
+
+    if is_clanless:
+        players.append(f"{nickname} (WN8: {wn8})")
