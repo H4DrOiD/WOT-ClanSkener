@@ -1,29 +1,30 @@
-<!DOCTYPE html>
-<html lang="sk">
-<head>
-    <meta charset="UTF-8">
-    <title>WoT Clan Skener</title>
-</head>
-<body>
-    <h1>WoT Recruiter</h1>
-    <form method="post">
-        <label>Minimálne WN8:</label>
-        <input type="number" name="wn8" required><br>
-        <label>Počet bitiek:</label>
-        <input type="number" name="battles" required><br>
-        <label>Email:</label>
-        <input type="email" name="email" required><br>
-        <input type="checkbox" required> Súhlasím so spracovaním údajov.<br>
-        <button type="submit">Vyhľadať hráčov</button>
-    </form>
-</body>
-</html>
-<label for="country">Krajina hráča:</label>
-<select name="country" id="country">
-  <option value="">Nezáleží</option>
-  <option value="cz">Česká republika</option>
-  <option value="sk">Slovensko</option>
-  <option value="pl">Poľsko</option>
-  <option value="de">Nemecko</option>
-  <option value="ru">Rusko</option>
-</select><br><br>
+{% extends "base.html" %}
+{% block title %}Domov{% endblock %}
+{% block content %}
+<h1>Vitajte v nástroji WOT Clan Skener</h1>
+<p>Skontroluj členov klanu podľa zvolených kritérií.</p>
+
+<form method="POST" action="/">
+    <label for="wn8">Minimálne WN8:</label><br>
+    <input type="number" id="wn8" name="wn8" required><br><br>
+
+    <label for="battles">Minimálny počet bitiek:</label><br>
+    <input type="number" id="battles" name="battles" required><br><br>
+
+    <label for="email">Tvoj email (pre notifikácie):</label><br>
+    <input type="email" id="email" name="email" required><br><br>
+
+    <label for="country">Krajina hráča:</label><br>
+    <select name="country" id="country">
+        <option value="">Nezáleží</option>
+        <option value="cz">Česká republika</option>
+        <option value="sk">Slovensko</option>
+        <option value="pl">Poľsko</option>
+        <option value="de">Nemecko</option>
+        <option value="ru">Rusko</option>
+        <!-- ďalšie krajiny podľa potreby -->
+    </select><br><br>
+
+    <button type="submit">Spustiť skenovanie</button>
+</form>
+{% endblock %}
