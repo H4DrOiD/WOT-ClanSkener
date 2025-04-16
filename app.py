@@ -18,43 +18,43 @@ def index():
         battles_input = request.form.get('battles')
         email = request.form.get('email')
 
-        # testovacie meno, neskôr nahradíme generovaním/zoznamom
-        test_nickname = "PantherXx"
-        api_result = search_players_by_nickname(test_nickname)
-
+        search_prefixes = ["a", "b", "c", "d", "e"]
         expected_values = load_expected_values()
         players = []
 
-        if api_result.get("status") == "ok":
-            for player in api_result["data"]:
-                nickname = player["nickname"]
-                account_id = player["account_id"]
+        for prefix in search_prefixes:
+            api_result = search_players_by_nickname(prefix)
 
-                # Overenie klanu
-                clan_data = get_clan_info(account_id)
-                is_clanless = False
+            if api_result.get("status") == "ok":
+                for player in api_result["data"]:
+                    nickname = player["nickname"]
+                    account_id = player["account_id"]
 
-                if clan_data.get("status") == "ok":
-                    player_data = clan_data["data"].get(str(account_id))
-                    if player_data is None or player_data.get("clan") is None:
-                        is_clanless = True
+                    # Overenie klanu
+                    clan_data = get_clan_info(account_id)
+                    is_clanless = False
 
-                # Získanie tankových štatistík + výpočet WN8
-                tank_stats_result = get_tank_stats(account_id)
-                wn8 = 0
-                battle_count = 0
+                    if clan_data.get("status") == "ok":
+                        player_data = clan_data["data"].get(str(account_id))
+                        if player_data is None or player_data.get("clan") is None:
+                            is_clanless = True
 
-                if tank_stats_result.get("status") == "ok":
-                    tank_data = tank_stats_result["data"].get(str(account_id), [])
-                    wn8 = calculate_wn8(tank_data, expected_values)
-                    battle_count = sum(t["statistics"]["battles"] for t in tank_data)
+                    # Získanie štatistík a výpočet WN8
+                    tank_stats_result = get_tank_stats(account_id)
+                    wn8 = 0
+                    battle_count = 0
 
-                # Overenie podmienok formulára
-                min_wn8 = int(wn8) >= int(wn8_input) if wn8_input else True
-                min_battles = battle_count >= int(battles_input) if battles_input else True
+                    if tank_stats_result.get("status") == "ok":
+                        tank_data = tank_stats_result["data"].get(str(account_id), [])
+                        wn8 = calculate_wn8(tank_data, expected_values)
+                        battle_count = sum(t["statistics"]["battles"] for t in tank_data)
 
-                if is_clanless and min_wn8 and min_battles:
-                    players.append(f"{nickname} | WN8: {wn8} | Bitky: {battle_count}")
+                    # Podmienky podľa formulára
+                    min_wn8 = int(wn8) >= int(wn8_input) if wn8_input else True
+                    min_battles = battle_count >= int(battles_input) if battles_input else True
+
+                    if is_clanless and min_wn8 and min_battles:
+                        players.append(f"{nickname} | WN8: {wn8} | Bitky: {battle_count}")
 
         return render_template('dashboard.html', players=players, country=country)
 
