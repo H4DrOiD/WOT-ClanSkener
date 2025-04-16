@@ -1,21 +1,41 @@
 {% extends "base.html" %}
-{% block title %}Dashboard{% endblock %}
+
 {% block content %}
-<h2>Výsledky skenovania</h2>
+<h1>Výsledky skenovania</h1>
+<p><strong>Krajina:</strong> {{ country if country else "Nezáleží" }}</p>
 
-{% if country %}
-<p><strong>Filtrované podľa krajiny:</strong> {{ country | upper }}</p>
+{% if error %}
+    <p style="color: red;">❌ Vyskytla sa chyba pri spracovaní hráčov.</p>
+{% elif players %}
+    <table>
+        <thead>
+            <tr>
+                <th>Nickname</th>
+                <th>WN8</th>
+                <th>Bitky</th>
+                <th>Výhry</th>
+                <th>Poškodenie</th>
+                <th>Zničené tanky</th>
+                <th>Zásahy</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+            <tr>
+                <td>{{ player.nickname }}</td>
+                <td>{{ player.wn8 }}</td>
+                <td>{{ player.battles }}</td>
+                <td>{{ player.wins }}</td>
+                <td>{{ player.damage_dealt }}</td>
+                <td>{{ player.frags }}</td>
+                <td>{{ player.hits }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% else %}
-<p><strong>Krajina:</strong> Nezáleží</p>
+    <p>Zatiaľ žiadne výsledky.</p>
 {% endif %}
 
-{% if players %}
-<ul>
-  {% for player in players %}
-    <li>{{ player }}</li>
-  {% endfor %}
-</ul>
-{% else %}
-<p>Zatiaľ žiadne výsledky.</p>
-{% endif %}
+<p><a href="{{ url_for('index') }}">⬅️ Späť</a></p>
 {% endblock %}
