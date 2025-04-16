@@ -31,3 +31,12 @@ def get_clan_info(account_id):
     }
     response = requests.get(url, params=params)
     return response.json()
+
+def get_tank_stats(account_id):
+    url = "https://api.worldoftanks.eu/wot/tanks/stats/"
+    params = {
+        "application_id": API_ID,
+        "account_id": account_id
+    }
+    response = requests.get(url, params=params)
+    return response.json()
