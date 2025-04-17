@@ -1,1 +1,0 @@
-# Skript pre pravidelné spúšťanie skenovania hráčov
