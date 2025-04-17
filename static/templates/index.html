@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <form method="POST">
+        <label for="min_battles">Minimálny počet hier:</label>
+        <input type="number" id="min_battles" name="min_battles" required>
+
+        <label for="min_rating">Minimálny WTR:</label>
+        <input type="number" id="min_rating" name="min_rating" required>
+
+        <label for="country">Krajina:</label>
+        <select id="country" name="country">
+            <option value="">Nezáleží</option>
+            <option value="sk">Slovensko</option>
+            <option value="cz">Česko</option>
+            <option value="hu">Maďarsko</option>
+            <option value="pl">Poľsko</option>
+        </select>
+
+        <button type="submit">Vyhľadať hráčov bez klanu</button>
+    </form>
+
+    {% if players %}
+        <h2>Výsledky skenovania</h2>
+        <ul>
+            {% for player in players %}
+                <li>
+                    <strong>{{ player.nickname }}</strong> – {{ player.battles }} hier, WTR: {{ player.wtr }}, krajina: {{ player.country }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% elif message %}
+        <p>{{ message }}</p>
+    {% endif %}
+{% endblock %}
