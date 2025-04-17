@@ -92,3 +92,9 @@ a:hover {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+.logo {
+    width: 120px;
+    height: auto;
+    display: block;
+    margin: 20px auto 10px auto;
+}
