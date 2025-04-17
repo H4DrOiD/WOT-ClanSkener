@@ -1,21 +1,36 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrácia - WOT ClanSkener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Registrácia veliteľa</h1>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="flashes">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <form method="POST" action="/register">
+            <label for="nickname">Prezývka:</label>
+            <input type="text" name="nickname" required>
 
-{% block content %}
-    <h2>Registrácia veliteľa</h2>
-    <form method="POST">
-        <label for="nickname">Prezývka:</label>
-        <input type="text" id="nickname" name="nickname" required>
+            <label for="clan_name">Názov klanu:</label>
+            <input type="text" name="clan_name" required>
 
-        <label for="clan_name">Názov klanu:</label>
-        <input type="text" id="clan_name" name="clan_name" required>
+            <label for="password">Heslo:</label>
+            <input type="password" name="password" required>
 
-        <label for="password">Heslo:</label>
-        <input type="password" id="password" name="password" required>
+            <button type="submit">Registrovať sa</button>
+        </form>
 
-        <button type="submit">Registrovať sa</button>
-    </form>
-
-    {% if error %}
-        <p class="error">{{ error }}</p>
-    {% endif %}
-{% endblock %}
+        <p>Už máš účet? <a href="/login">Prihlás sa tu</a>.</p>
+    </div>
+</body>
+</html>
