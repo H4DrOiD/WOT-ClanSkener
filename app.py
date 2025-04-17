@@ -59,3 +59,33 @@ def privacy():
 
 if __name__ == "__main__":
     app.run(debug=True)
+from flask import Flask, render_template, request
+from utils.wot_api import search_players_by_nickname  # Uisti sa, že táto funkcia existuje a vracia zoznam hráčov
+
+app = Flask(__name__)
+
+@app.route("/", methods=["GET", "POST"])
+def index():
+    players = []
+    country = ""
+    if request.method == "POST":
+        nickname = request.form.get("nickname")
+        country = request.form.get("country")
+
+        # Testovacie výpisy
+        print(f"Zadaný nickname: {nickname}")
+        print(f"Zadaná krajina: {country}")
+
+        try:
+            if nickname:
+                players = search_players_by_nickname(nickname, country)
+            else:
+                # Dočasný testovací fallback pre zobrazenie výsledkov
+                players = [
+                    {"nickname": "TestPlayer1", "wn8": 2150, "battles": 1500},
+                    {"nickname": "TestPlayer2", "wn8": 1790, "battles": 980}
+                ]
+        except Exception as e:
+            print(f"Chyba pri vyhľadávaní hráčov: {e}")
+    
+    return render_template("index.html", players=players, country=country)
