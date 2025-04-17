@@ -1,4 +1,4 @@
-mport os
+import os
 from flask import Flask, render_template, request
 from utils.wot_api import (
     search_players_by_nickname,
