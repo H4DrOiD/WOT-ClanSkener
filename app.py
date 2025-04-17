@@ -16,8 +16,10 @@ def index():
     if request.method == "POST":
         nickname = request.form.get("nickname")
         country = request.form.get("country")
-        min_battles = int(request.form.get("min_battles"))
-        min_wn8 = int(request.form.get("min_wn8"))
+        
+        # Použitie predvolených hodnôt, ak nie sú zadané
+        min_battles = int(request.form.get("min_battles", 0))  # predvolená hodnota 0
+        min_wn8 = int(request.form.get("min_wn8", 0))  # predvolená hodnota 0
         
         # Volanie funkcie na získanie hráčov
         players = get_players_without_clan(nickname, country, min_battles, min_wn8)
@@ -73,4 +75,3 @@ def send_discord_notification(players):
 
 if __name__ == "__main__":
     app.run(debug=True)
-
