@@ -7,57 +7,46 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <img src="{{ url_for('static', filename='images/tank_logo.png') }}" alt="WOT Logo" class="logo">
-            <h1>WOT ClanSkener</h1>
-            <p>Vyhľadaj hráčov bez klanu podľa prezývky alebo krajiny</p>
-        </header>
-
+        <h1>WOT ClanSkener</h1>
         <form method="POST">
-            <input type="text" name="nickname" placeholder="Prezývka hráča" value="{{ request.form.nickname or '' }}">
-            <select name="country">
-                <option value="">Nezáleží na krajine</option>
-                <option value="cz" {% if country == 'cz' %}selected{% endif %}>Česko</option>
-                <option value="sk" {% if country == 'sk' %}selected{% endif %}>Slovensko</option>
-            </select>
-            <button type="submit">Vyhľadať</button>
+            <label for="min_battles">Minimálny počet bitiek:</label>
+            <input type="number" id="min_battles" name="min_battles" value="1000" required>
+
+            <label for="min_winrate">Minimálna výhernosť (%):</label>
+            <input type="number" id="min_winrate" name="min_winrate" value="48" step="0.1" required>
+
+            <button type="submit">Vyhľadať hráčov bez klanu</button>
         </form>
 
-        {% if players %}
-            <section class="results">
-                <h2>Výsledky skenovania</h2>
-                <p>Krajina: {{ country or "Nezáleží" }}</p>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>🎮 Prezývka</th>
-                            <th>📊 WN8</th>
-                            <th>🛡️ Bitky</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for player in players %}
-                            <tr>
-                                <td>{{ player.nickname }}</td>
-                                <td>{{ player.wn8 }}</td>
-                                <td>{{ player.battles }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </section>
-        {% elif request.method == "POST" %}
-            <section class="results">
-                <h2>Výsledky skenovania</h2>
-                <p>Krajina: {{ country or "Nezáleží" }}</p>
-                <p class="no-results">❌ Nenašli sa žiadni hráči.</p>
-            </section>
+        {% if error %}
+            <p class="error">{{ error }}</p>
         {% endif %}
 
-        <footer>
-            <a href="{{ url_for('privacy') }}">Zásady ochrany osobných údajov</a>
-        </footer>
+        {% if players %}
+            <h2>Výsledky skenovania:</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Meno</th>
+                        <th>Bitky</th>
+                        <th>Výhry (%)</th>
+                        <th>Posledná aktivita</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                        <tr>
+                            <td><a href="https://worldoftanks.eu/en/community/accounts/{{ player.account_id }}/" target="_blank">{{ player.nickname }}</a></td>
+                            <td>{{ player.battles }}</td>
+                            <td>{{ player.winrate }}</td>
+                            <td>{{ player.last_battle_time }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% elif players is not none %}
+            <p>Žiadni hráči nezodpovedajú kritériám.</p>
+        {% endif %}
     </div>
 </body>
 </html>
