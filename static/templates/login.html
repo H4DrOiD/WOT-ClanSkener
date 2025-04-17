@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Prihlásenie veliteľa</h2>
+    <form method="POST">
+        <label for="nickname">Prezývka:</label>
+        <input type="text" id="nickname" name="nickname" required>
+
+        <label for="password">Heslo:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Prihlásiť sa</button>
+    </form>
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+{% endblock %}
