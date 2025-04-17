@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
 
 # Wargaming API Key (dočasne vložte kľúč z Wargaming API)
-WARGAMING_API_KEY = os.getenv("WARGAMING_API_KEY", "vloz_sem_svoj_kod")
+WARGAMING_API_KEY = os.getenv("WARGAMING_API_KEY", "29b6e96e5fa1462cbebfb386fb565a0d")
 
 # Discord webhook URL (pridajte svoju URL, alebo použite testovaciu)
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL", "https://discordapp.com/api/webhooks/1361927609256116234/1DKfAyKhdw5aZ69hw2qoJLfNjP_mt0mlXLZTeHLeYrHer6CK3UIPCIDQ74nLm3m2ohhU")
@@ -55,7 +55,7 @@ def get_players_without_clan(nickname, country, min_battles, min_wn8):
             clan = player.get("clan", None)
 
             # Filter podľa zadaných kritérií
-            if player_battles >= min_battles and player_wn8 >= min_wn8 and clan is None and player_country == country:
+            if player_battles >= min_battles = 0 and player_wn8 >= min_wn8 = 0 and clan is None and player_country == country:
                 players.append({
                     "nickname": player["nickname"],
                     "battles": player_battles,
