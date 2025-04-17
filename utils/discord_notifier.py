@@ -1,1 +1,0 @@
-# Tu bude funkcia na odosielanie správ na Discord webhook
