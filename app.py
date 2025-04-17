@@ -1,55 +1,47 @@
-import os
-from flask import Flask, render_template, request, redirect, url_for, session
-from utils.db import init_db, get_users_without_clan, register_commander, verify_commander
-from utils.discord import send_discord_notification
+from flask import Flask, render_template, request, redirect, url_for
+import requests
+from utils.wot_api import get_player_stats
 
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "tajneheslo")
-init_db()
 
-@app.route("/", methods=["GET", "POST"])
+# Predpokladám, že tu si uložíš svoj discord webhook
+DISCORD_WEBHOOK_URL = "https://discordapp.com/api/webhooks/1361927609256116234/1DKfAyKhdw5aZ69hw2qoJLfNjP_mt0mlXLZTeHLeYrHer6CK3UIPCIDQ74nLm3m2ohhU"
+
+@app.route('/')
 def index():
-    if request.method == "POST":
-        battles = int(request.form.get("battles", 0))
-        wtr = int(request.form.get("wtr", 0))
-        country = request.form.get("country", "")
+    return render_template('index.html')
 
-        players = get_users_without_clan(battles, wtr, country)
+@app.route('/search', methods=['POST'])
+def search():
+    nickname = request.form['nickname']
+    stats, wn8 = get_player_stats(nickname)
+    
+    if stats:
+        # Posielame údaje do Discordu
+        send_to_discord(stats, wn8)
+        return render_template('result.html', stats=stats, wn8=wn8, nickname=nickname)
+    else:
+        return render_template('index.html', message="Player not found!")
 
-        # Ak je veliteľ prihlásený a má webhook
-        if "username" in session:
-            username = session["username"]
-            send_discord_notification(players, username)
-
-        return render_template("index.html", players=players, country=country, battles=battles, wtr=wtr)
-
-    return render_template("index.html", players=[])
-
-@app.route("/register", methods=["GET", "POST"])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    if request.method == "POST":
-        nickname = request.form["nickname"]
-        clan_name = request.form["clan_name"]
-        password = request.form["password"]
-        webhook = request.form["webhook"]
-        register_commander(nickname, clan_name, password, webhook)
-        return redirect(url_for("login"))
-    return render_template("register.html")
+    if request.method == 'POST':
+        # Tu implementuješ registráciu veliteľa
+        username = request.form['username']
+        password = request.form['password']
+        clan_name = request.form['clan_name']
+        
+        # Uložíš informácie do databázy alebo do konfigurácie
+        # Zatiaľ len placeholder
+        return redirect(url_for('index'))
+    return render_template('register.html')
 
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        nickname = request.form["nickname"]
-        password = request.form["password"]
-        if verify_commander(nickname, password):
-            session["username"] = nickname
-            return redirect(url_for("index"))
-    return render_template("login.html")
+def send_to_discord(stats, wn8):
+    data = {
+        "content": f"New Player Stats:\n\n{stats}\nWN8: {wn8}",
+        "username": "WOT-ClanSkener Bot",
+    }
+    requests.post(DISCORD_WEBHOOK_URL, json=data)
 
-@app.route("/logout")
-def logout():
-    session.pop("username", None)
-    return redirect(url_for("index"))
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)
