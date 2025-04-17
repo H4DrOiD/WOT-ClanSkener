@@ -1,19 +1,39 @@
+<!-- index.html -->
 {% extends "base.html" %}
-
 {% block content %}
-<h1>🎯 WOT-ClanSkener</h1>
-<p>Zadaj parametre pre vyhľadávanie hráčov bez klanu:</p>
+<div class="content">
+    <form method="post">
+        <label for="min_battles">Minimálny počet bitiek:</label>
+        <input type="number" id="min_battles" name="min_battles" required>
 
-<form method="POST">
-    <label for="min_battles">Minimálny počet bitiek:</label>
-    <input type="number" id="min_battles" name="min_battles" value="1000" required><br><br>
+        <label for="min_wn8">Minimálny WN8:</label>
+        <input type="number" id="min_wn8" name="min_wn8">
 
-    <label for="min_wn8">Minimálna WN8:</label>
-    <input type="number" id="min_wn8" name="min_wn8" value="1000" required><br><br>
+        <label for="nation">Krajina:</label>
+        <select name="nation">
+            <option value="">Nezáleží</option>
+            <option value="sk">🇸🇰 Slovensko</option>
+            <option value="cz">🇨🇿 Česko</option>
+            <option value="us">🇺🇸 USA</option>
+        </select>
 
-    <label for="country">Národnosť hráča (kód krajiny, napr. sk, cz, pl alebo nechaj prázdne):</label>
-    <input type="text" id="country" name="country"><br><br>
+        <button type="submit">Vyhľadať hráčov</button>
+    </form>
 
-    <button type="submit">🔍 Spustiť skenovanie</button>
-</form>
+    {% if results %}
+    <div class="results">
+        <h2>Výsledky skenovania</h2>
+        <div class="result-block">
+            {% for player in results %}
+            <div class="player-entry">
+                <p><strong>Nick:</strong> {{ player.nickname }}</p>
+                <p><strong>Bitky:</strong> {{ player.battles }}</p>
+                <p><strong>WN8:</strong> {{ player.wn8 }}</p>
+                <p><strong>Krajina:</strong> {{ player.nation|default("Nezistené") }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}
