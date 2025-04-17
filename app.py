@@ -7,7 +7,7 @@ from utils.wot_api import (
     calculate_wn8,
 )
 
-app = Flask(__WOT__)
+app = Flask(__name__)
 app.secret_key = os.getenv("29b6e96e5fa1462cbebfb386fb565a0d", "981118")
 
 @app.route("/", methods=["GET", "POST"])
