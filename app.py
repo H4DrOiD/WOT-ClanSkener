@@ -2,17 +2,7 @@ import os
 from flask import Flask, render_template, request
 import requests
 
-from flask import Flask
-
 app = Flask(__name__)
-
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
 
 # Wargaming API Key (dočasne vložte kľúč z Wargaming API)
 WARGAMING_API_KEY = os.getenv("WARGAMING_API_KEY", "29b6e96e5fa1462cbebfb386fb565a0d")
@@ -55,11 +45,7 @@ def get_players_without_clan(nickname, country, min_battles, min_wn8):
             clan = player.get("clan", None)
 
             # Filter podľa zadaných kritérií
-            if player_battles >= min_battles
-            else min_battles = 0:
-            and player_wn8 >= min_wn8 
-            else min_wn8 = 0:
-            and clan is None and player_country == country:
+            if player_battles >= min_battles and player_wn8 >= min_wn8 and clan is None and player_country == country:
                 players.append({
                     "nickname": player["nickname"],
                     "battles": player_battles,
@@ -87,3 +73,4 @@ def send_discord_notification(players):
 
 if __name__ == "__main__":
     app.run(debug=True)
+
