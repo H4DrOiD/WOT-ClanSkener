@@ -2,26 +2,27 @@
 <html lang="sk">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WOT-ClanSkener</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/tank_logo.png') }}">
 </head>
 <body>
-    <header>
-        <img src="{{ url_for('static', filename='images/tank_logo.png') }}" alt="Tank Logo" class="logo">
-        <h1>WOT-ClanSkener</h1>
-        <nav>
-            <a href="{{ url_for('index') }}">Domov</a> |
-            <a href="{{ url_for('dashboard') }}">Dashboard</a> |
-            <a href="{{ url_for('privacy') }}">Ochrana údajov</a>
-        </nav>
-    </header>
 
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <div class="logo-container">
+        <img src="{{ url_for('static', filename='images/tank_logo.png') }}" alt="Tank Logo" class="logo">
+    </div>
+
+    <div class="container">
+        <h1>WOT ClanSkener</h1>
+        {% block content %}
+        <!-- Tu sa vkladajú konkrétne stránky -->
+        {% endblock %}
+    </div>
 
     <footer>
-        <p>&copy; 2025 WOT-ClanSkener. Všetky práva vyhradené.</p>
+        &copy; 2025 WOT-ClanSkener | Made for tank lovers 🚀
     </footer>
+
 </body>
 </html>
