@@ -2,7 +2,17 @@ import os
 from flask import Flask, render_template, request
 import requests
 
+from flask import Flask
+
 app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Hello, World!"
+
+if __name__ == "__main__":
+    app.run()
+
 
 # Wargaming API Key (dočasne vložte kľúč z Wargaming API)
 WARGAMING_API_KEY = os.getenv("WARGAMING_API_KEY", "vloz_sem_svoj_kod")
