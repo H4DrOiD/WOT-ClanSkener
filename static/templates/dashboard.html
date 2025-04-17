@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Dashboard</h2>
+    <p>Vitaj, {{ user.nickname }} z klanu {{ user.clan_name }}</p>
+
+    <h3>Nastavenie Discord Webhooku</h3>
+    <form method="POST">
+        <label for="webhook">Webhook URL:</label>
+        <input type="url" id="webhook" name="webhook" value="{{ user.discord_webhook }}" required>
+        <button type="submit">Uložiť</button>
+    </form>
+
+    {% if saved %}
+        <p class="success">Webhook bol úspešne uložený.</p>
+    {% endif %}
+{% endblock %}
