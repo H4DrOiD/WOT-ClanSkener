@@ -1,13 +1,19 @@
 import requests
 
-def send_discord_notification(webhook_url, message):
-    """Pošle správu na zadaný Discord webhook."""
-    data = {
-        "content": message
+def send_discord_notification(webhook_url, players):
+    if not players:
+        return
+
+    content = "**🎯 Noví hráči bez klanu, ktorí spĺňajú tvoje kritériá:**\n"
+    for player in players:
+        content += f"🔹 **{player['nickname']}** – {player['battles']} hier, WTR: {player['wtr']}, Krajina: {player['country']}\n"
+
+    payload = {
+        "content": content
     }
+
     try:
-        response = requests.post(webhook_url, json=data)
-        if response.status_code != 204:
-            print(f"❌ Chyba pri odosielaní na Discord: {response.status_code}, {response.text}")
-    except Exception as e:
-        print(f"❌ Výnimka pri odosielaní na Discord: {e}")
+        response = requests.post(webhook_url, json=payload)
+        response.raise_for_status()
+    except requests.exceptions.RequestException as e:
+        print(f"Chyba pri odosielaní webhooku: {e}")
