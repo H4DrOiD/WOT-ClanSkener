@@ -1,49 +1,34 @@
 import os
 from flask import Flask, render_template, request
-from utils.wot_api import (
-    search_players_by_nickname,
-    get_account_info,
-    get_tank_stats,
-    calculate_wn8
-)
+from utils.wot_api import search_players_by_nickname, get_account_info
 
 app = Flask(__name__)
-app.secret_key = os.getenv("FLASK_SECRET_KEY", "tajny_kluc_pre_dev")
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    print("➡️ Vstup do index()")  # TEST
-
     players = []
-    country = ""
-
+    country_filter = request.form.get("country")
+    
     if request.method == "POST":
-        print("🟢 Prijatý POST request!")  # TEST
-
         nickname = request.form.get("nickname")
-        country = request.form.get("country")
-
-        print(f"🔍 Zadaný nickname: {nickname}")  # TEST
-        print(f"🌍 Zadaná krajina: {country}")    # TEST
-
-        # TESTOVACÍ FAKE VÝSTUP – kým API nie je zapojené
         if nickname:
-            players = [
-                {"nickname": nickname, "wn8": 1580, "battles": 2450}
-            ]
-            print("✅ Pridávam testovacieho hráča do výstupu.")
-        else:
-            print("❌ Nickname nebol zadaný.")
+            search_results = search_players_by_nickname(nickname)
+            if search_results and search_results.get("status") == "ok":
+                for result in search_results["data"]:
+                    account_id = result["account_id"]
+                    info = get_account_info(account_id)
+                    if info and info.get("status") == "ok":
+                        player_data = info["data"].get(str(account_id), {})
+                        if player_data and not player_data.get("clan_id"):
+                            if not country_filter or country_filter == "any" or player_data.get("client_language") == country_filter:
+                                players.append({
+                                    "nickname": player_data.get("nickname"),
+                                    "battles": player_data.get("statistics", {}).get("all", {}).get("battles"),
+                                    "wn8": "N/A",  # môže byť doplnené neskôr
+                                    "country": player_data.get("client_language", "N/A")
+                                })
 
-    return render_template("index.html", players=players, country=country)
-
-@app.route("/dashboard")
-def dashboard():
-    return render_template("dashboard.html")
-
-@app.route("/privacy")
-def privacy():
-    return render_template("privacy.html")
+    return render_template("index.html", players=players)
 
 if __name__ == "__main__":
     app.run(debug=True)
