@@ -3,46 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WOT ClanSkener</title>
+    <title>World of Tanks Clan Search</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>WOT ClanSkener</h1>
-        </div>
-    </header>
+    <div class="container">
+        <header>
+            <h1>World of Tanks - Vyhľadávanie hráčov bez klanu</h1>
+        </header>
 
-    <main>
-        <div class="container">
-            <h2>Vyhľadávanie hráčov</h2>
-            <form method="POST">
-                <div>
-                    <label for="nickname">Prezývka hráča:</label>
-                    <input type="text" id="nickname" name="nickname" required>
-                </div>
-                <div>
-                    <label for="country">Krajina:</label>
-                    <select name="country" id="country">
-                        <option value="SK">Slovensko</option>
-                        <option value="CZ">Česká republika</option>
-                        <option value="HU">Maďarsko</option>
-                        <option value="PL">Poľsko</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="min_battles">Minimálny počet bitiek:</label>
-                    <input type="number" id="min_battles" name="min_battles" required>
-                </div>
-                <div>
-                    <label for="min_wn8">Minimálny WN8:</label>
-                    <input type="number" id="min_wn8" name="min_wn8" required>
-                </div>
-                <button type="submit">Vyhľadať hráčov</button>
-            </form>
+        <form action="/" method="post">
+            <div class="form-group">
+                <label for="nickname">Prezývka (Voliteľné):</label>
+                <input type="text" id="nickname" name="nickname" placeholder="Zadajte prezývku">
+            </div>
 
+            <div class="form-group">
+                <label for="country">Krajina:</label>
+                <select id="country" name="country">
+                    <option value="SK">Slovensko</option>
+                    <option value="CZ">Česká republika</option>
+                    <option value="HU">Maďarsko</option>
+                    <option value="PL">Poľsko</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="min_battles">Minimálny počet bitiek:</label>
+                <input type="number" id="min_battles" name="min_battles" value="100">
+            </div>
+
+            <div class="form-group">
+                <label for="min_wn8">Minimálny WN8:</label>
+                <input type="number" id="min_wn8" name="min_wn8" value="1000">
+            </div>
+
+            <button type="submit">Vyhľadať</button>
+        </form>
+
+        <div class="players-list">
             {% if players %}
-                <h3>Výsledky vyhľadávania:</h3>
+                <h2>Výsledky:</h2>
                 <table>
                     <thead>
                         <tr>
@@ -63,8 +64,11 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            {% else %}
+                <p>Žiadni hráči nenašli podľa zadaných kritérií.</p>
             {% endif %}
         </div>
-    </main>
+
+    </div>
 </body>
 </html>
