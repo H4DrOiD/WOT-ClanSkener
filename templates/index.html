@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WOT ClanSkener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>WOT ClanSkener</h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <h2>Vyhľadávanie hráčov</h2>
+            <form method="POST">
+                <div>
+                    <label for="nickname">Prezývka hráča:</label>
+                    <input type="text" id="nickname" name="nickname" required>
+                </div>
+                <div>
+                    <label for="country">Krajina:</label>
+                    <select name="country" id="country">
+                        <option value="SK">Slovensko</option>
+                        <option value="CZ">Česká republika</option>
+                        <option value="HU">Maďarsko</option>
+                        <option value="PL">Poľsko</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="min_battles">Minimálny počet bitiek:</label>
+                    <input type="number" id="min_battles" name="min_battles" required>
+                </div>
+                <div>
+                    <label for="min_wn8">Minimálny WN8:</label>
+                    <input type="number" id="min_wn8" name="min_wn8" required>
+                </div>
+                <button type="submit">Vyhľadať hráčov</button>
+            </form>
+
+            {% if players %}
+                <h3>Výsledky vyhľadávania:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Prezývka</th>
+                            <th>Počet bitiek</th>
+                            <th>WN8</th>
+                            <th>Krajina</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for player in players %}
+                            <tr>
+                                <td>{{ player.nickname }}</td>
+                                <td>{{ player.battles }}</td>
+                                <td>{{ player.wn8 }}</td>
+                                <td>{{ player.country }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>
