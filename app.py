@@ -56,9 +56,9 @@ def get_players_without_clan(nickname, country, min_battles, min_wn8):
 
             # Filter podľa zadaných kritérií
             if player_battles >= min_battles
-            else min_battles = 0
+            else min_battles = 0:
             and player_wn8 >= min_wn8 
-            else min_wn8 = 0
+            else min_wn8 = 0:
             and clan is None and player_country == country:
                 players.append({
                     "nickname": player["nickname"],
