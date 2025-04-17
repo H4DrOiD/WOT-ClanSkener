@@ -1,58 +1,57 @@
-import requests
 import os
+import requests
 
 WG_API_KEY = os.getenv("WARGAMING_API_KEY")
-WG_API_BASE_URL = "https://api.worldoftanks.eu/wot"
 
-def search_players(limit=100, min_battles=1000, min_rating=3000, countries=["sk", "cz", "hu", "pl"]):
-    all_results = []
-    for country in countries:
-        players = get_random_players_by_country(country, limit)
-        for player in players:
-            if not player.get("clan_id") and player.get("statistics", {}).get("battles", 0) >= min_battles:
-                rating = player.get("global_rating", 0)
-                if rating >= min_rating:
-                    all_results.append(player)
-    return all_results
+BASE_URL = "https://api.worldoftanks.eu/wot"
 
-def get_random_players_by_country(country, limit=100):
-    url = f"{WG_API_BASE_URL}/account/list/"
+
+def get_players_without_clan(min_battles=0, min_wtr=0, nations=None, limit=100):
+    search_url = f"{BASE_URL}/account/list/"
     params = {
         "application_id": WG_API_KEY,
-        "language": "en",
-        "search": "",  # necháme prázdne pre random výsledky
-        "limit": limit
+        "limit": limit,
+        "fields": "nickname,account_id",
+        "search": "",  # empty string returns general users
     }
-
-    response = requests.get(url, params=params)
-    data = response.json()
-
-    if data.get("status") != "ok":
-        return []
-
-    accounts = data.get("data", [])
+    response = requests.get(search_url, params=params)
     result = []
 
-    for acc in accounts:
-        account_id = acc.get("account_id")
-        details = get_account_info(account_id)
-        if details:
-            result.append(details)
+    if response.status_code == 200 and response.json().get("status") == "ok":
+        data = response.json().get("data", [])
+        for player in data:
+            account_id = player.get("account_id")
+            info = get_account_info(account_id)
+            if info and info.get("clan_id") is None:
+                battles = info.get("statistics", {}).get("all", {}).get("battles", 0)
+                wtr = info.get("global_rating", 0)
+                country = info.get("country", "").upper()
+
+                if (
+                    battles >= min_battles
+                    and wtr >= min_wtr
+                    and (not nations or country in nations)
+                ):
+                    result.append({
+                        "nickname": info.get("nickname"),
+                        "battles": battles,
+                        "wtr": wtr,
+                        "country": country,
+                    })
 
     return result
 
+
 def get_account_info(account_id):
-    url = f"{WG_API_BASE_URL}/account/info/"
+    info_url = f"{BASE_URL}/account/info/"
     params = {
         "application_id": WG_API_KEY,
         "account_id": account_id,
-        "extra": "statistics.globalmap"
+        "fields": "nickname,clan_id,statistics.global_rating,statistics.all.battles"
     }
+    response = requests.get(info_url, params=params)
 
-    response = requests.get(url, params=params)
-    data = response.json()
-
-    if data.get("status") != "ok":
-        return None
-
-    return data["data"].get(str(account_id))
+    if response.status_code == 200 and response.json().get("status") == "ok":
+        data = response.json().get("data", {})
+        return data.get(str(account_id))
+    return None
