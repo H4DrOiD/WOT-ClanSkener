@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Prihlásenie{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>Prihlásenie veliteľa</h2>
+    <form method="POST" action="{{ url_for('login') }}">
+        <label for="nickname">Prezývka:</label>
+        <input type="text" id="nickname" name="nickname" required>
+
+        <label for="password">Heslo:</label>
+        <input type="password" id="password" name="password" required>
+
+        <button type="submit">Prihlásiť</button>
+    </form>
+
+    <p>Nemáte ešte účet? <a href="{{ url_for('register') }}">Zaregistrujte sa</a></p>
+</div>
+{% endblock %}
