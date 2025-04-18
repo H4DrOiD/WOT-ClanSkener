@@ -1,61 +1,39 @@
 import os
-import requests
 from flask import Flask, render_template, request
+from utils.wot_api import search_players
+import requests
 
 app = Flask(__name__)
-
-WARGAMING_API_KEY = os.getenv("WARGAMING_API_KEY", "TVOJ_KLUC")
-REGIONS = {"eu": "https://api.worldoftanks.eu"}
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     players = []
-
     if request.method == "POST":
-        wtr = int(request.form.get("wtr") or 0)
-        battles = int(request.form.get("battles") or 0)
-        country = request.form.get("country")
-        webhook_url = request.form.get("webhook")
+        try:
+            min_battles = int(request.form.get("min_battles", 0))
+            min_wtr = int(request.form.get("min_wtr", 0))
+            country = request.form.get("country", "ALL")
+            webhook_url = request.form.get("webhook_url")
 
-        if not webhook_url:
-            return render_template("index.html", players=[], error="Musíš zadať Discord webhook URL.")
+            players = search_players(min_wtr, min_battles, country)
 
-        # API call
-        players = get_unclanned_players(wtr, battles, country)
+            if webhook_url and players:
+                send_to_discord(players, webhook_url)
 
-        if players:
-            send_to_discord(players, webhook_url)
+        except Exception as e:
+            print(f"Chyba: {e}")
 
     return render_template("index.html", players=players)
 
-def get_unclanned_players(min_wtr, min_battles, country_code):
-    # Tu by si implementoval reálnu logiku volania Wargaming API
-    # My použijeme simuláciu dát:
-    mock_data = [
-        {"nickname": "Player1", "battles": 15000, "wtr": 5800, "country": "SK"},
-        {"nickname": "Player2", "battles": 5000, "wtr": 4200, "country": "CZ"},
-        {"nickname": "Player3", "battles": 3000, "wtr": 3700, "country": "PL"},
-    ]
-
-    return [
-        player for player in mock_data
-        if player["wtr"] >= min_wtr and player["battles"] >= min_battles and player["country"] == country_code
-    ]
-
 def send_to_discord(players, webhook_url):
+    content = "**Hráči bez klanu podľa kritérií:**\n"
     for player in players:
-        message = (
-            f"🕹️ **Hráč bez klanu**\n"
-            f"Prezývka: {player['nickname']}\n"
-            f"Bitky: {player['battles']}\n"
-            f"WTR: {player['wtr']}\n"
-            f"Krajina: {player['country']}"
+        content += (
+            f"🔸 **{player['nickname']}** | Bitky: {player['battles']} | WTR: {player['wtr']} | Krajina: {player['country']}\n"
         )
-        payload = {"content": message}
-        try:
-            requests.post(webhook_url, json=payload)
-        except Exception as e:
-            print(f"Chyba pri odosielaní na Discord: {e}")
+
+    payload = {"content": content}
+    requests.post(webhook_url, json=payload)
 
 if __name__ == "__main__":
     app.run(debug=True)
