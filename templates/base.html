@@ -3,13 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WOT ClanSkener</title>
+    <title>WOT Clan Skener</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>WOT ClanSkener</h1>
+    <header>
+        <h1>WOT Clan Skener</h1>
+    </header>
+    <main>
         {% block content %}{% endblock %}
-    </div>
+    </main>
 </body>
 </html>
