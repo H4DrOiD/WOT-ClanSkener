@@ -3,60 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>WOT Clan Skener</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
     <div class="container">
-        <h1>WOT Clan Skener</h1>
-        <form method="post">
-            <label for="min_battles">Minimálny počet hier:</label>
-            <input type="number" name="min_battles" id="min_battles" placeholder="napr. 1000" required>
+        <h1>🔍 WOT Clan Skener</h1>
 
-            <label for="min_wtr">Minimálny WTR:</label>
-            <input type="number" name="min_wtr" id="min_wtr" placeholder="napr. 3000" required>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="post">
+            <label for="wtr">Min. WTR:</label>
+            <input type="number" name="wtr" id="wtr" required>
+
+            <label for="battles">Min. počet hier:</label>
+            <input type="number" name="battles" id="battles" required>
 
             <label for="country">Krajina:</label>
-            <select name="country" id="country">
-                <option value="">Nezáleží</option>
+            <select name="country" id="country" required>
                 <option value="SK">Slovensko</option>
                 <option value="CZ">Česko</option>
-                <option value="HU">Maďarsko</option>
                 <option value="PL">Poľsko</option>
-                <option value="UK">Veľká Británia</option>
+                <option value="HU">Maďarsko</option>
+                <option value="UK">Spojené kráľovstvo</option>
             </select>
 
             <label for="webhook">Discord Webhook URL:</label>
-            <input type="url" name="webhook" id="webhook" placeholder="vložiť URL" required>
+            <input type="url" name="webhook" id="webhook" required>
 
             <button type="submit">Vyhľadať hráčov</button>
         </form>
 
-        {% if error %}
-            <div class="error">{{ error }}</div>
-        {% endif %}
-
         {% if players %}
-            <h2>Výsledky skenovania</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Prezývka</th>
-                        <th>Počet hier</th>
-                        <th>WTR</th>
-                        <th>Krajina</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for player in players %}
-                    <tr>
-                        <td>{{ player.nickname }}</td>
-                        <td>{{ player.battles }}</td>
-                        <td>{{ player.wtr }}</td>
-                        <td>{{ player.country }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <h2>🎯 Nájdení hráči:</h2>
+            <ul>
+                {% for player in players %}
+                    <li>
+                        <strong>{{ player.nickname }}</strong> — 
+                        Bitky: {{ player.battles }}, 
+                        WTR: {{ player.wtr }},
+                        Krajina: {{ player.country }}
+                    </li>
+                {% endfor %}
+            </ul>
         {% endif %}
     </div>
 </body>
