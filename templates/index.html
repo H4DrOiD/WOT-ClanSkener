@@ -1,47 +1,46 @@
 {% extends "base.html" %}
 
 {% block content %}
+<h2>Vyhľadaj hráčov bez klanu</h2>
+
 <form method="POST">
     <label for="min_battles">Minimálny počet hier:</label>
     <input type="number" name="min_battles" required>
 
-    <label for="min_wtr">Minimálne WTR:</label>
+    <label for="min_wtr">Minimálny WTR:</label>
     <input type="number" name="min_wtr" required>
 
     <label for="country">Krajina:</label>
     <select name="country" required>
         <option value="SK">Slovensko</option>
         <option value="CZ">Česko</option>
-        <option value="HU">Maďarsko</option>
         <option value="PL">Poľsko</option>
-        <option value="UK">Spojené kráľovstvo</option>
+        <option value="HU">Maďarsko</option>
+        <option value="UK">Veľká Británia</option>
     </select>
 
-    <label for="webhook_url">Discord Webhook (povinné):</label>
-    <input type="url" name="webhook_url" required>
+    <label for="webhook">Discord Webhook URL:</label>
+    <input type="url" name="webhook" required>
 
-    <button type="submit">Vyhľadať hráčov</button>
+    <button type="submit">Vyhľadať</button>
 </form>
 
 {% if players %}
-    <h2>Výsledky skenovania</h2>
-    <table>
-        <tr>
-            <th>Prezývka</th>
-            <th>Počet hier</th>
-            <th>WTR</th>
-            <th>Posledná bitka</th>
-            <th>Úroveň účtu</th>
-        </tr>
+    <h3>Nájdení hráči:</h3>
+    <ul>
         {% for player in players %}
-        <tr>
-            <td><a href="https://worldoftanks.eu/en/community/accounts/{{ player.account_id }}/" target="_blank">{{ player.nickname }}</a></td>
-            <td>{{ player.battles }}</td>
-            <td style="color: {{ player.wtr_color }}">{{ player.wtr }}</td>
-            <td>{{ player.last_battle_time }}</td>
-            <td>{{ player.account_level }}</td>
-        </tr>
+            <li>
+                <a href="https://worldoftanks.eu/en/community/accounts/{{ player.account_id }}/" target="_blank">
+                    <strong>{{ player.nickname }}</strong>
+                </a>
+                - Hry: {{ player.battles }},
+                WTR: {{ player.wtr }},
+                Úroveň účtu: {{ player.account_level }},
+                Posledná bitka: {{ player.last_battle_time }}
+            </li>
         {% endfor %}
-    </table>
+    </ul>
+{% elif players is not none %}
+    <p>Neboli nájdení žiadni hráči zodpovedajúci kritériám.</p>
 {% endif %}
 {% endblock %}
