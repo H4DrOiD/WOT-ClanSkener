@@ -3,56 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <title>WOT ClanSkener</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
-    <h1>🔍 Vyhľadávanie hráčov bez klanu</h1>
+    <div class="container">
+        <h1>World of Tanks - Hráči bez klanu</h1>
 
-    <form method="post">
-        <label>Minimálny počet hier:</label>
-        <input type="number" name="min_battles" required><br>
+        {% if error %}
+            <p class="error">Chyba: {{ error }}</p>
+        {% endif %}
 
-        <label>Minimálny WTR (rating):</label>
-        <input type="number" name="min_wtr" required><br>
+        <form method="POST">
+            <label>Minimálny počet bitiek:</label>
+            <input type="number" name="min_battles" required>
 
-        <label>Krajina:</label>
-        <select name="country" required>
-            <option value="any">Nezáleží</option>
-            <option value="SK">Slovensko</option>
-            <option value="CZ">Česko</option>
-            <option value="PL">Poľsko</option>
-            <option value="HU">Maďarsko</option>
-            <option value="GB">Spojené kráľovstvo</option>
-        </select><br>
+            <label>Minimálny WTR:</label>
+            <input type="number" name="min_wtr" required>
 
-        <label>Discord Webhook URL:</label>
-        <input type="url" name="webhook_url" required><br>
+            <label>Krajina:</label>
+            <select name="country">
+                <option value="">Nezáleží</option>
+                <option value="SK">Slovensko</option>
+                <option value="CZ">Česko</option>
+                <option value="PL">Poľsko</option>
+                <option value="HU">Maďarsko</option>
+                <option value="UK">Veľká Británia</option>
+            </select>
 
-        <button type="submit">Vyhľadať</button>
-    </form>
+            <label>Discord Webhook URL:</label>
+            <input type="text" name="webhook" required>
 
-    {% if players %}
-        <h2>Výsledky:</h2>
-        <table>
-            <thead>
+            <button type="submit">Vyhľadať hráčov</button>
+        </form>
+
+        {% if players %}
+            <h2>Výsledky:</h2>
+            <table>
                 <tr>
                     <th>Prezývka</th>
                     <th>Bitky</th>
                     <th>WTR</th>
                     <th>Krajina</th>
                 </tr>
-            </thead>
-            <tbody>
                 {% for player in players %}
-                    <tr>
-                        <td><a href="https://worldoftanks.eu/en/community/accounts/{{ player.account_id }}/" target="_blank">{{ player.nickname }}</a></td>
-                        <td>{{ player.battles }}</td>
-                        <td>{{ player.wtr }}</td>
-                        <td>{{ player.country }}</td>
-                    </tr>
+                <tr>
+                    <td><a href="{{ player.profile_link }}" target="_blank">{{ player.nickname }}</a></td>
+                    <td>{{ player.battles }}</td>
+                    <td>{{ player.wtr }}</td>
+                    <td>{{ player.country }}</td>
+                </tr>
                 {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+            </table>
+        {% endif %}
+    </div>
 </body>
 </html>
+
