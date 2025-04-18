@@ -1,40 +1,49 @@
-<h1>WOT Clan Skener</h1>
-<form method="POST">
-  <label for="min_battles">Minimálny počet hier:</label>
-  <input type="number" name="min_battles" required>
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>WOT Clan Skener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>World of Tanks - Hráči bez klanu</h1>
+        <form method="POST">
+            <label for="min_battles">Minimálny počet hier:</label>
+            <input type="number" name="min_battles" required>
 
-  <label for="min_wtr">Minimálny WTR:</label>
-  <input type="number" name="min_wtr" required>
+            <label for="min_wtr">Minimálne WTR:</label>
+            <input type="number" name="min_wtr" required>
 
-  <label for="country">Krajina:</label>
-  <select name="country">
-    <option value="any">Nezáleží</option>
-    <option value="SK">Slovensko</option>
-    <option value="CZ">Česko</option>
-    <option value="PL">Poľsko</option>
-    <option value="HU">Maďarsko</option>
-    <option value="UK">Spojené kráľovstvo</option>
-  </select>
+            <label for="country">Krajina:</label>
+            <select name="country" required>
+                <option value="">-- Vyber krajinu --</option>
+                <option value="SK">Slovensko</option>
+                <option value="CZ">Česko</option>
+                <option value="HU">Maďarsko</option>
+                <option value="PL">Poľsko</option>
+                <option value="UK">Veľká Británia</option>
+            </select>
 
-  <label for="webhook">Discord Webhook:</label>
-  <input type="url" name="webhook" required>
+            <label for="webhook">Discord Webhook:</label>
+            <input type="text" name="webhook" required placeholder="Vlož svoj Discord Webhook URL">
 
-  <button type="submit">Vyhľadať hráčov</button>
-</form>
+            <button type="submit">Vyhľadať hráčov</button>
+        </form>
 
-<h2>Výsledky skenovania</h2>
-{% if players %}
-  <ul>
-    {% for player in players %}
-      <li>
-        <a href="https://worldoftanks.eu/en/community/accounts/{{ player.account_id }}" target="_blank">
-          {{ player.nickname }}
-        </a>
-        — Bitky: {{ player.battles }}, WTR: {{ player.wtr }},
-        Posledná bitka: {{ player.last_battle }}, Úroveň účtu: {{ player.account_level }}
-      </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Zatiaľ žiadne výsledky.</p>
-{% endif %}
+        {% if players %}
+            <h2>Výsledky skenovania</h2>
+            {% for player in players %}
+                <div class="player-card">
+                    <p><strong>Prezývka:</strong> <a href="https://worldoftanks.eu/en/community/accounts/{{ player.account_id }}" target="_blank">{{ player.nickname }}</a></p>
+                    <p><strong>Počet hier:</strong> {{ player.battles }}</p>
+                    <p><strong>WTR:</strong> {{ player.wtr }}</p>
+                    <p><strong>Posledná bitka:</strong> {{ player.last_battle }}</p>
+                    <p><strong>Úroveň účtu:</strong> {{ player.account_level }}</p>
+                    <p><strong>Krajina:</strong> {{ player.country }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+</body>
+</html>
