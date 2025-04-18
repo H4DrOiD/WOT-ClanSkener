@@ -1,74 +1,45 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(to right, #2c3e50, #34495e);
-    color: #ecf0f1;
+    background: url("/static/bg_tank.jpg") no-repeat center center fixed;
+    background-size: cover;
+    color: #fff;
     margin: 0;
     padding: 0;
 }
 
 .container {
-    max-width: 600px;
+    background-color: rgba(0, 0, 0, 0.75);
     margin: 50px auto;
-    background-color: #1c1c1c;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    max-width: 800px;
 }
 
-h1, h2 {
-    text-align: center;
-    color: #f39c12;
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-label {
-    font-weight: bold;
-}
-
-input[type="number"],
-input[type="url"],
-select {
+input, select, button {
     padding: 10px;
+    margin: 10px 0;
+    width: 100%;
     border-radius: 5px;
     border: none;
     font-size: 16px;
 }
 
 button {
-    padding: 12px;
-    font-size: 16px;
-    background-color: #f39c12;
-    border: none;
-    border-radius: 5px;
-    color: white;
+    background-color: #e89c29;
+    color: black;
     font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.3s ease;
 }
 
-button:hover {
-    background-color: #d35400;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
-    background-color: #2c3e50;
-    padding: 10px;
-    margin: 10px 0;
+.player-card {
+    background-color: #1e1e1e;
+    padding: 15px;
+    margin-top: 10px;
+    border-left: 5px solid #e89c29;
     border-radius: 5px;
 }
 
-.error {
-    color: #e74c3c;
-    font-weight: bold;
-    text-align: center;
+a {
+    color: #ffd700;
+    text-decoration: none;
 }
