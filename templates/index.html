@@ -21,3 +21,20 @@
 
   <button type="submit">Vyhľadať hráčov</button>
 </form>
+
+<h2>Výsledky skenovania</h2>
+{% if players %}
+  <ul>
+    {% for player in players %}
+      <li>
+        <a href="https://worldoftanks.eu/en/community/accounts/{{ player.account_id }}" target="_blank">
+          {{ player.nickname }}
+        </a>
+        — Bitky: {{ player.battles }}, WTR: {{ player.wtr }},
+        Posledná bitka: {{ player.last_battle }}, Úroveň účtu: {{ player.account_level }}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Zatiaľ žiadne výsledky.</p>
+{% endif %}
