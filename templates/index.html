@@ -2,50 +2,63 @@
 <html lang="sk">
 <head>
     <meta charset="UTF-8">
-    <title>WOT - Skenovanie hráčov bez klanu</title>
+    <title>WOT Clan Skener</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>🎯 Skenovanie hráčov bez klanu (WOT)</h1>
+        <h1>WOT Clan Skener</h1>
         <form method="POST">
-            <label for="min_battles">Minimálny počet hier:</label>
-            <input type="number" id="min_battles" name="min_battles" required>
+            <label for="min_battles">Minimálny počet bitiek:</label>
+            <input type="number" name="min_battles" required>
 
-            <label for="min_wtr">Minimálne WTR:</label>
-            <input type="number" id="min_wtr" name="min_wtr" required>
+            <label for="min_wtr">Minimálny WTR:</label>
+            <input type="number" name="min_wtr" required>
 
             <label for="country">Krajina:</label>
-            <select id="country" name="country" required>
-                <option value="">Vyber krajinu</option>
-                <option value="SK">Slovensko</option>
-                <option value="CZ">Česko</option>
-                <option value="HU">Maďarsko</option>
-                <option value="PL">Poľsko</option>
-                <option value="UK">Veľká Británia</option>
+            <select name="country">
+                <option value="any">Nezáleží</option>
+                <option value="sk">Slovensko</option>
+                <option value="cz">Česko</option>
+                <option value="pl">Poľsko</option>
+                <option value="hu">Maďarsko</option>
+                <option value="en">UK / Ostatné</option>
             </select>
 
-            <label for="webhook_url">Discord Webhook URL:</label>
-            <input type="url" id="webhook_url" name="webhook_url" required>
+            <label for="webhook">Discord Webhook URL:</label>
+            <input type="url" name="webhook" required>
 
-            <button type="submit">🔎 Vyhľadať</button>
+            <button type="submit">Vyhľadať hráčov</button>
         </form>
 
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
         {% if players %}
-            <h2>🔍 Výsledky:</h2>
-            <ul class="results">
-                {% for player in players %}
-                    <li>
-                        <strong>{{ player.nickname }}</strong> |
-                        Bitky: {{ player.battles }} |
-                        WTR: {{ player.wtr }} |
-                        Krajina: {{ player.country }} |
-                        <a href="https://worldoftanks.eu/en/community/accounts/{{ player.account_id }}/" target="_blank">Profil</a>
-                    </li>
-                {% endfor %}
-            </ul>
-        {% elif players is not none %}
-            <p>⚠️ Nenašli sa žiadni hráči vyhovujúci zadaným podmienkam.</p>
+            <h2>Nájdení hráči bez klanu:</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Prezývka</th>
+                        <th>Bitky</th>
+                        <th>WTR</th>
+                        <th>Krajina</th>
+                        <th>Posledná bitka</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                        <tr>
+                            <td><a href="https://worldoftanks.eu/ltw/user/{{ player.account_id }}" target="_blank">{{ player.nickname }}</a></td>
+                            <td>{{ player.battles }}</td>
+                            <td>{{ player.wtr }}</td>
+                            <td>{{ player.country }}</td>
+                            <td>{{ player.last_battle }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         {% endif %}
     </div>
 </body>
