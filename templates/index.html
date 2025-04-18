@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>WOT - Clan Skener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 WOT Clan Skener</h1>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            <label for="wtr">Minimálne WTR:</label>
+            <input type="number" name="wtr" id="wtr" required>
+
+            <label for="battles">Minimálny počet hier:</label>
+            <input type="number" name="battles" id="battles" required>
+
+            <label for="country">Krajina:</label>
+            <select name="country" id="country">
+                <option value="">Nezáleží</option>
+                <option value="SK">Slovensko</option>
+                <option value="CZ">Česko</option>
+                <option value="PL">Poľsko</option>
+                <option value="HU">Maďarsko</option>
+                <option value="UK">Spojené kráľovstvo</option>
+            </select>
+
+            <label for="webhook">Discord Webhook URL:</label>
+            <input type="url" name="webhook" id="webhook" required>
+
+            <button type="submit">Vyhľadať hráčov</button>
+        </form>
+
+        {% if players %}
+            <h2>Výsledky skenovania</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Prezývka</th>
+                        <th>WTR</th>
+                        <th>Bitky</th>
+                        <th>Krajina</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                        <tr>
+                            <td>{{ player.nickname }}</td>
+                            <td>{{ player.wtr }}</td>
+                            <td>{{ player.battles }}</td>
+                            <td>{{ player.country }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</body>
+</html>
