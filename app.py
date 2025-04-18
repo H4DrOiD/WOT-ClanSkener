@@ -1,7 +1,6 @@
 import os
 import requests
 from flask import Flask, render_template, request
-from datetime import datetime
 
 app = Flask(__name__)
 
@@ -10,79 +9,79 @@ WARGAMING_API_KEY = os.getenv("WARGAMING_API_KEY", "29b6e96e5fa1462cbebfb386fb56
 @app.route("/", methods=["GET", "POST"])
 def index():
     players = []
-    error = None
-
     if request.method == "POST":
-        try:
-            min_battles = int(request.form.get("min_battles", 0))
-            min_wtr = int(request.form.get("min_wtr", 0))
-            country = request.form.get("country", "any")
-            webhook_url = request.form.get("webhook")
+        min_battles = int(request.form.get("min_battles", 0))
+        min_wtr = int(request.form.get("min_wtr", 0))
+        country = request.form.get("country")
+        webhook_url = request.form.get("webhook_url")
 
-            if not webhook_url:
-                error = "Zadaj Discord webhook!"
-                return render_template("index.html", players=[], error=error)
+        players = get_unclanned_players(min_battles, min_wtr, country)
 
-            # zavolaj funkciu na získanie hráčov
-            players = get_players(min_battles, min_wtr, country)
+        if players and webhook_url:
+            notify_discord(players, webhook_url)
 
-            if players:
-                send_to_discord(players, webhook_url)
+    return render_template("index.html", players=players)
 
-        except Exception as e:
-            error = f"Nastala chyba: {str(e)}"
-
-    return render_template("index.html", players=players, error=error)
-
-def get_players(min_battles, min_wtr, country):
-    url = f"https://api.worldoftanks.eu/wot/account/list/?application_id={WARGAMING_API_KEY}&limit=100"
+def get_unclanned_players(min_battles, min_wtr, country):
+    url = f"https://api.worldoftanks.eu/wot/account/list/?application_id={WARGAMING_API_KEY}&search=&limit=100"
     response = requests.get(url)
-    filtered_players = []
 
+    if response.status_code != 200:
+        return []
+
+    data = response.json().get("data", [])
+    result = []
+
+    for player in data:
+        account_id = player["account_id"]
+        nickname = player["nickname"]
+
+        details = get_player_details(account_id)
+        if not details:
+            continue
+
+        stats = details.get("statistics", {}).get("all", {})
+        battles = stats.get("battles", 0)
+        wtr = details.get("global_rating", 0)
+        clan = details.get("clan", None)
+        last_battle_time = details.get("last_battle_time", 0)
+        account_level = details.get("account_leveling", {}).get("level", 0)
+        player_country = details.get("country", "")
+
+        if (
+            battles >= min_battles and
+            wtr >= min_wtr and
+            clan is None and
+            (country == "any" or country == player_country)
+        ):
+            result.append({
+                "nickname": nickname,
+                "battles": battles,
+                "wtr": wtr,
+                "last_battle": last_battle_time,
+                "level": account_level,
+                "country": player_country
+            })
+
+    return result
+
+def get_player_details(account_id):
+    url = f"https://api.worldoftanks.eu/wot/account/info/?application_id={WARGAMING_API_KEY}&account_id={account_id}&extra=global_rating"
+    response = requests.get(url)
     if response.status_code == 200:
-        for player in response.json().get("data", []):
-            account_id = player.get("account_id")
-            nickname = player.get("nickname")
+        return response.json()["data"].get(str(account_id), {})
+    return {}
 
-            if not account_id:
-                continue
-
-            info_url = f"https://api.worldoftanks.eu/wot/account/info/?application_id={WARGAMING_API_KEY}&account_id={account_id}&extra=statistics"
-            info_res = requests.get(info_url).json()
-            info = info_res.get("data", {}).get(str(account_id), {})
-
-            if info and not info.get("clan_id"):
-                battles = info.get("statistics", {}).get("all", {}).get("battles", 0)
-                wtr = info.get("global_rating", 0)
-                last_battle = info.get("last_battle_time")
-                country_code = info.get("client_language", "")
-
-                if (
-                    battles >= min_battles
-                    and wtr >= min_wtr
-                    and (country == "any" or country_code.lower() == country.lower())
-                ):
-                    filtered_players.append({
-                        "nickname": nickname,
-                        "battles": battles,
-                        "wtr": wtr,
-                        "country": country_code,
-                        "last_battle": datetime.utcfromtimestamp(last_battle).strftime('%d.%m.%Y %H:%M') if last_battle else "neznámy",
-                        "account_id": account_id
-                    })
-    return filtered_players
-
-def send_to_discord(players, webhook_url):
+def notify_discord(players, webhook_url):
     for player in players:
-        msg = f"**Hráč bez klanu nájdený!**\n"
-        msg += f"Prezývka: {player['nickname']}\n"
-        msg += f"Bitky: {player['battles']}\n"
-        msg += f"WTR: {player['wtr']}\n"
-        msg += f"Krajina: {player['country']}\n"
-        msg += f"Posledná bitka: {player['last_battle']}\n"
-        msg += f"https://worldoftanks.eu/ltw/user/{player['account_id']}"
-
-        requests.post(webhook_url, json={"content": msg})
+        message = (
+            f"🕵️ Nový hráč bez klanu:\n"
+            f"👤 Nick: {player['nickname']}\n"
+            f"🎯 Bitky: {player['battles']}\n"
+            f"🏆 WTR: {player['wtr']}\n"
+            f"🌍 Krajina: {player['country']}\n"
+        )
+        requests.post(webhook_url, json={"content": message})
 
 if __name__ == "__main__":
     app.run(debug=True)
