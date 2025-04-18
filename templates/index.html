@@ -1,53 +1,23 @@
-<!DOCTYPE html>
-<html lang="sk">
-<head>
-    <meta charset="UTF-8">
-    <title>WOT Clan Skener</title>
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <div class="container">
-        <h1>🔍 WOT Clan Skener</h1>
+<h1>WOT Clan Skener</h1>
+<form method="POST">
+  <label for="min_battles">Minimálny počet hier:</label>
+  <input type="number" name="min_battles" required>
 
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
+  <label for="min_wtr">Minimálny WTR:</label>
+  <input type="number" name="min_wtr" required>
 
-        <form method="post">
-            <label for="wtr">Min. WTR:</label>
-            <input type="number" name="wtr" id="wtr" required>
+  <label for="country">Krajina:</label>
+  <select name="country">
+    <option value="any">Nezáleží</option>
+    <option value="SK">Slovensko</option>
+    <option value="CZ">Česko</option>
+    <option value="PL">Poľsko</option>
+    <option value="HU">Maďarsko</option>
+    <option value="UK">Spojené kráľovstvo</option>
+  </select>
 
-            <label for="battles">Min. počet hier:</label>
-            <input type="number" name="battles" id="battles" required>
+  <label for="webhook">Discord Webhook:</label>
+  <input type="url" name="webhook" required>
 
-            <label for="country">Krajina:</label>
-            <select name="country" id="country" required>
-                <option value="SK">Slovensko</option>
-                <option value="CZ">Česko</option>
-                <option value="PL">Poľsko</option>
-                <option value="HU">Maďarsko</option>
-                <option value="UK">Spojené kráľovstvo</option>
-            </select>
-
-            <label for="webhook">Discord Webhook URL:</label>
-            <input type="url" name="webhook" id="webhook" required>
-
-            <button type="submit">Vyhľadať hráčov</button>
-        </form>
-
-        {% if players %}
-            <h2>🎯 Nájdení hráči:</h2>
-            <ul>
-                {% for player in players %}
-                    <li>
-                        <strong>{{ player.nickname }}</strong> — 
-                        Bitky: {{ player.battles }}, 
-                        WTR: {{ player.wtr }},
-                        Krajina: {{ player.country }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    </div>
-</body>
-</html>
+  <button type="submit">Vyhľadať hráčov</button>
+</form>
