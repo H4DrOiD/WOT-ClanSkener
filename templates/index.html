@@ -1,44 +1,58 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <title>WOT ClanSkener</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🔍 Vyhľadávanie hráčov bez klanu</h1>
 
-{% block content %}
-<div class="form-container">
-    <h2>Vyhľadávanie hráčov bez klanu</h2>
-    <form method="POST">
-        <label for="wtr">Minimálne WTR:</label>
-        <input type="number" id="wtr" name="wtr" required>
+    <form method="post">
+        <label>Minimálny počet hier:</label>
+        <input type="number" name="min_battles" required><br>
 
-        <label for="battles">Minimálny počet hier:</label>
-        <input type="number" id="battles" name="battles" required>
+        <label>Minimálny WTR (rating):</label>
+        <input type="number" name="min_wtr" required><br>
 
-        <label for="country">Krajina:</label>
-        <select id="country" name="country" required>
+        <label>Krajina:</label>
+        <select name="country" required>
+            <option value="any">Nezáleží</option>
             <option value="SK">Slovensko</option>
             <option value="CZ">Česko</option>
             <option value="PL">Poľsko</option>
             <option value="HU">Maďarsko</option>
-            <option value="UK">Veľká Británia</option>
-        </select>
+            <option value="GB">Spojené kráľovstvo</option>
+        </select><br>
 
-        <label for="webhook">Discord Webhook URL:</label>
-        <input type="url" id="webhook" name="webhook" placeholder="https://discord.com/api/webhooks/..." required>
+        <label>Discord Webhook URL:</label>
+        <input type="url" name="webhook_url" required><br>
 
         <button type="submit">Vyhľadať</button>
     </form>
-</div>
 
-{% if players %}
-    <div class="results">
-        <h3>Nájdení hráči:</h3>
-        <ul>
-            {% for player in players %}
-                <li>
-                    <strong><a href="https://worldoftanks.eu/en/community/accounts/{{ player.account_id }}/" target="_blank">{{ player.nickname }}</a></strong> —
-                    Bitiek: {{ player.battles }} | WTR: {{ player.wtr }} | Posledná bitka: {{ player.last_battle_time }}
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-{% elif players is not none %}
-    <p>Žiadni hráči neboli nájdení podľa zadaných kritérií.</p>
-{% endif %}
-{% endblock %}
+    {% if players %}
+        <h2>Výsledky:</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Prezývka</th>
+                    <th>Bitky</th>
+                    <th>WTR</th>
+                    <th>Krajina</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for player in players %}
+                    <tr>
+                        <td><a href="https://worldoftanks.eu/en/community/accounts/{{ player.account_id }}/" target="_blank">{{ player.nickname }}</a></td>
+                        <td>{{ player.battles }}</td>
+                        <td>{{ player.wtr }}</td>
+                        <td>{{ player.country }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+</body>
+</html>
